@@ -1,75 +1,25 @@
-# React + TypeScript + Vite
+# 방탈출 리뷰
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+그럼 대략 어떤 페이지가 필요할까???
+로그인, 회원가입페이지, 메인페이지 겸 방탈출 리스트 가 보이는 페이지, 방탈출 후기 등록(+수정페이지), 후기등록된 상세페이지, 통계 페이지? (어떤게 가장 평점이 좋았는지), 삭제 기능
 
-Currently, two official plugins are available:
+- 방탈출 후기 등록페이지
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+참여자 추가 - 플레이 횟수++ (참여자로 등록했을때 플레이 횟수를 ++ 하게 만들기)
+장르: (select) - 공포/로맨스/코미디/일상.. etc
+가격: input(number type)
+활동성:  별 (rating)
+테마시간: input ((number type))
+자물쇠: 장치 1:9, 2:8 (slider 사용)
+힌트 방식 (전화/무전기/보드판) radio ? select?
+평균 체감 난이도 (10점 만점에 9.2점? 이건 rating 해야하나? )
+참여자 후기작성란 (별점 + 후기 1~2줄 대략 50자)
 
-## React Compiler
+흙길 - 풀길 - 풀꽃길 - 꽃길 - 꽃밭길 - 인생테마 
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+ 
+참여자 1: 풀꽃길
+참여자 2: 꽃길
+참여자 3: 꽃길
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
-
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+꽃길 (다수결에 의해^^?)
