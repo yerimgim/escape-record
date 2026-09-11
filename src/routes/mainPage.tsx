@@ -14,6 +14,7 @@ import {
 import { useAuthStore } from "../store/useAuthStore";
 import type { EscapeRecord } from "../types/record";
 import { RoadBadge } from "../components/RoadBadge";
+import { RecordDrawer } from "../components/RecordDrawer";
 
 const MOCK_RECORDS: EscapeRecord[] = [
   {
@@ -84,11 +85,14 @@ export function MainPage() {
   const userName = user?.name || "방탈출러";
 
   const [records, setRecords] = useState(MOCK_RECORDS);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const totalCount = records.length;
   const successCount = records.filter((r) => r.isSuccess).length;
   const successRate =
     totalCount > 0 ? Math.round((successCount / totalCount) * 100) : 0;
+
+  const handleAddRecord = () => {};
 
   return (
     <div className="flex-1 flex flex-col bg-neutral-50 min-h-full pb-24">
@@ -253,13 +257,19 @@ export function MainPage() {
 
       <div className="fixed bottom-6 left-0 right-0 max-w-107.5 mx-auto px-5 flex justify-end pointer-events-none">
         <button
-          onClick={() => alert("기록 작성 Drawer를 엽니다.")}
+          onClick={() => setIsDrawerOpen(true)}
           className="pointer-events-auto bg-neutral-900 hover:bg-neutral-800 text-white shadow-lg shadow-neutral-900/20 active:scale-95 transition-all flex items-center gap-2 px-5 py-3.5 rounded-full font-bold text-sm"
         >
           <Plus className="w-5 h-5" />
           <span>기록하기</span>
         </button>
       </div>
+
+      <RecordDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onSubmit={handleAddRecord}
+      />
     </div>
   );
 }
