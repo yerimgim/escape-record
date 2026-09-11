@@ -41,75 +41,52 @@ function LoginComponent() {
   };
 
   return (
-    <div className="flex flex-col p-6 bg-neutral-50">
-      <div className="mb-6">
-        <span className="flex items-center justify-center">
-          <DoorOpen size={36} />
-        </span>
-        <h1 className="text-2xl font-black text-neutral-900 mt-2">
-          방탈출 기록장
-        </h1>
-        <p className="text-xs text-neutral-500 mt-1">
-          방탈출_공테 유닛의 기록장
-        </p>
+    <div className="flex-1 flex flex-col justify-center px-8 bg-white min-h-full">
+      <div className="flex flex-col gap-2 items-center mb-20">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-neutral-900 text-white mb-4">
+          <DoorOpen className="w-6 h-6" />
+        </div>
+        <h1 className="font-black text-neutral-800 leading-none">ㅂㅌㅊ</h1>
+        <p className="text-xs text-neutral-500">방탈출_공테 유닛의 기록장</p>
       </div>
 
-      <Card className="border-neutral-200 shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg">로그인</CardTitle>
-          <CardDescription className="text-xs">
-            등록한 이름과 4자리 비밀번호를 입력하세요
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form action="" onSubmit={handleLogin}>
-            <div className="flex flex-col gap-2">
-              <span className="text-sm font-semibold text-neutral-700">
-                이름 (닉네임)
-              </span>
-              <div className="relative flex items-center">
-                <User className="absolute left-3 w-4 h-4 text-neutral-900" />
-                <Input
-                  placeholder="뚝딱"
-                  className="pl-9 rounded-sm"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <span className="text-sm font-semibold text-neutral-700 ">
-                비밀번호 (4자리)
-              </span>
-              <div className="relative">
-                <Lock className="absolute top-2.5 left-3 w-4 h-4 text-neutral-900" />
-                <Input
-                  type="password"
-                  maxLength={4}
-                  placeholder="****"
-                  className="pl-9 rounded-sm tracking-widest"
-                  value={pin}
-                  onChange={(e) => setPin(e.target.value)}
-                />
-              </div>
-            </div>
-            {err && <p className="text-xs text-rose-400 font-medium">{err}</p>}
-            <Button
-              type="submit"
-              className="w-full bg-neutral-900 hover:bg-neutral-800 font-bold"
-            >
-              로그인
-            </Button>
-          </form>
-
-          <div className="mt-4 text-xs text-neutral-500">
-            처음이라면 <br />
-            <Link to="/signup" className="underline">
-              프로필 만들기 (회원가입)
-            </Link>
+      <form onSubmit={handleLogin} className="space-y-4">
+        <div className="space-y-1.5">
+          <div className="relative">
+            <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+            <Input
+              placeholder="이름"
+              className="pl-10 h-11 rounded-md text-sm focus-visible:ring-1 focus-visible:ring-neutral-900"
+            />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        <div className="space-y-1.5">
+          <div className="relative">
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+            <Input
+              type="password"
+              maxLength={4}
+              placeholder="비밀번호"
+              className="pl-10 h-11 rounded-md text-sm tracking-widest focus-visible:ring-1 focus-visible:ring-neutral-900"
+            />
+          </div>
+        </div>
+        {err && <p className="text-xs text-rose-400 font-medium">{err}</p>}
+
+        <Button
+          type="submit"
+          className="w-full h-11 rounded-md bg-neutral-900 hover:bg-neutral-800 text-white font-bold text-sm mt-4"
+        >
+          로그인
+        </Button>
+      </form>
+
+      <div className="my-4 text-xs text-neutral-500">
+        <Link to="/signup" className="underline">
+          프로필 만들기
+        </Link>
+      </div>
     </div>
   );
 }

@@ -12,7 +12,7 @@ function RootComponent() {
         <header className="p-4 flex items-center justify-between">
           <nav>
             <Link to="/" className="font-black text-slate-900">
-              방탈출 기록
+              방탈출
             </Link>
           </nav>
         </header>
