@@ -11,7 +11,7 @@ function RootComponent() {
       <main className="w-full max-w-107.5 h-dvh sm:h-220 sm:rounded-[32px] bg-white shadow-2xl flex flex-col relative overflow-hidden">
         <header className="p-4 flex items-center justify-between">
           <nav>
-            <Link to="/" className="font-black text-slate-900">
+            <Link to="/" className="font-black text-slate-900 font-aggro">
               방탈출
             </Link>
           </nav>

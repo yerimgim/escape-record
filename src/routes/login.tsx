@@ -39,7 +39,9 @@ function LoginComponent() {
         <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-neutral-900 text-white mb-4">
           <DoorOpen className="w-6 h-6" />
         </div>
-        <h1 className="font-black text-neutral-800 leading-none">ㅂㅌㅊ</h1>
+        <h1 className=" text-2xl font-black text-neutral-800 leading-none font-aggro">
+          ㅂㅌㅊ
+        </h1>
         <p className="text-xs text-neutral-500">방탈출_공테 유닛의 기록장</p>
       </div>
 
@@ -65,7 +67,7 @@ function LoginComponent() {
               placeholder="비밀번호"
               className="pl-10 h-11 rounded-md text-sm tracking-widest focus-visible:ring-1 focus-visible:ring-neutral-900"
               value={pin}
-              onChange={(e) => setPin(e.target.value)}
+              onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
             />
           </div>
         </div>
