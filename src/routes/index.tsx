@@ -1,13 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useAuthStore } from "../store/useAuthStore";
+import { MainPage } from "./mainPage";
 
 export const Route = createFileRoute("/")({
-  component: IndexComponent,
+  beforeLoad: () => {
+    const { isAuthenticated } = useAuthStore.getState();
+    if (!isAuthenticated) {
+      throw redirect({ to: "/login" });
+    }
+  },
+  component: MainPage,
 });
-
-function IndexComponent() {
-  return (
-    <div className="flex flex-col gap-2">
-      <main>메인페이지</main>
-    </div>
-  );
-}

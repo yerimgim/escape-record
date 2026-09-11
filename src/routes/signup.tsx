@@ -1,11 +1,17 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { Button } from "../components/ui/button";
 import { useState } from "react";
-import { DoorOpen, User, Lock } from "lucide-react";
+import { User, Lock } from "lucide-react";
 import { Input } from "../components/ui/input";
 import { useAuthStore } from "../store/useAuthStore";
 
 export const Route = createFileRoute("/signup")({
+  beforeLoad: () => {
+    const { isAuthenticated } = useAuthStore.getState();
+    if (isAuthenticated) {
+      throw redirect({ to: "/" });
+    }
+  },
   component: SignupComponent,
 });
 

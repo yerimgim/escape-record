@@ -1,4 +1,9 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  redirect,
+  useNavigate,
+} from "@tanstack/react-router";
 import { DoorOpen, User, Lock } from "lucide-react";
 import { Input } from "../components/ui/input";
 import { useAuthStore } from "../store/useAuthStore";
@@ -6,6 +11,15 @@ import { useState } from "react";
 import { Button } from "../components/ui/button";
 
 export const Route = createFileRoute("/login")({
+  beforeLoad: () => {
+    const { isAuthenticated } = useAuthStore.getState();
+
+    if (isAuthenticated) {
+      throw redirect({
+        to: "/",
+      });
+    }
+  },
   component: LoginComponent,
 });
 
@@ -67,7 +81,7 @@ function LoginComponent() {
               placeholder="비밀번호"
               className="pl-10 h-11 rounded-md text-sm tracking-widest focus-visible:ring-1 focus-visible:ring-neutral-900"
               value={pin}
-              onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
+              onChange={(e) => setPin(e.target.value)}
             />
           </div>
         </div>
