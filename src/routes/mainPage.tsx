@@ -83,7 +83,7 @@ export function MainPage() {
   const logout = useAuthStore((state) => state.logout);
   const userName = user?.name || "방탈출러";
 
-  const [records] = useState<EscapeRecord[]>(MOCK_RECORDS);
+  const [records, setRecords] = useState(MOCK_RECORDS);
 
   const totalCount = records.length;
   const successCount = records.filter((r) => r.isSuccess).length;
