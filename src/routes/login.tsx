@@ -1,12 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { DoorOpen, User, Lock } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { useAuthStore } from "../store/useAuthStore";
 import { useState } from "react";
@@ -57,6 +50,8 @@ function LoginComponent() {
             <Input
               placeholder="이름"
               className="pl-10 h-11 rounded-md text-sm focus-visible:ring-1 focus-visible:ring-neutral-900"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
         </div>
@@ -69,6 +64,8 @@ function LoginComponent() {
               maxLength={4}
               placeholder="비밀번호"
               className="pl-10 h-11 rounded-md text-sm tracking-widest focus-visible:ring-1 focus-visible:ring-neutral-900"
+              value={pin}
+              onChange={(e) => setPin(e.target.value)}
             />
           </div>
         </div>
