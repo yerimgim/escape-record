@@ -8,12 +8,25 @@ import {
 } from "./ui/drawer";
 import { Input } from "./ui/input";
 import { useState } from "react";
+import type { EscapeRecord } from "../types/record";
 
-export const RecordDrawer = ({ isOpen, onClose, onSubmit }) => {
+type RecordDrawerProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (record: EscapeRecord) => void;
+};
+
+// 임시
+
+export const RecordDrawer = ({
+  isOpen,
+  onClose,
+  onSubmit,
+}: RecordDrawerProps) => {
   const [storeName, setStoreName] = useState("");
   return (
     <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DrawerContent className="w-full max-w-107.5 h-dvh mx-auto flex items-center justify-between shrink-0 bg-white">
+      <DrawerContent className="w-full max-w-107.5 h-dvh mx-auto flex items-center shrink-0 bg-white">
         <DrawerHeader className="border-b border-neutral-100 px-5 py-3.5 flex items-center justify-between shrink-0">
           <DrawerTitle className="font-black text-neutral-900 flex items-center gap-1.5">
             방탈출 기록하기
@@ -35,6 +48,15 @@ export const RecordDrawer = ({ isOpen, onClose, onSubmit }) => {
                 required
               />
             </div>
+            {/* 
+           input
+           테마명
+           성공여부 (버튼), /시간 
+            평가 (길 ) - badge 로 ROAD_BADGE_OPTIONS
+            자물쇠 : 장치  
+           
+           
+           */}
           </div>
         </form>
       </DrawerContent>
