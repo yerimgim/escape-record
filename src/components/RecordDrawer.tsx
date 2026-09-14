@@ -6,8 +6,11 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "./ui/drawer";
+import { Input } from "./ui/input";
+import { useState } from "react";
 
 export const RecordDrawer = ({ isOpen, onClose, onSubmit }) => {
+  const [storeName, setStoreName] = useState("");
   return (
     <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DrawerContent className="w-full max-w-107.5 h-dvh mx-auto flex items-center justify-between shrink-0 bg-white">
@@ -20,9 +23,20 @@ export const RecordDrawer = ({ isOpen, onClose, onSubmit }) => {
           </DrawerClose>
         </DrawerHeader>
 
-        <main className="space-y-3">
-          <div>??????</div>
-        </main>
+        <form>
+          <div className="space-y-3">
+            <div>
+              <label htmlFor="">매장명</label>
+              <Input
+                type="text"
+                placeholder="예: 비트포비아 던전 강남"
+                value={storeName}
+                onChange={(e) => setStoreName(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+        </form>
       </DrawerContent>
     </Drawer>
   );
