@@ -1,4 +1,4 @@
-import { Clock, Key, Star, X } from "lucide-react";
+import { Check, Clock, Key, Plus, Star, X } from "lucide-react";
 import {
   Drawer,
   DrawerClose,
@@ -14,7 +14,9 @@ import { RoadBadge } from "./RoadBadge";
 import { GENRE_OPTIONS, ROAD_BADGE_OPTIONS } from "../constants/record";
 import { Slider } from "./ui/slider";
 import { Textarea } from "./ui/textarea";
-import { Field, FieldDescription, FieldLabel } from "./ui/field";
+import { Field, FieldLabel } from "./ui/field";
+import { useAuthStore } from "../store/useAuthStore";
+import { Badge } from "./ui/badge";
 
 type RecordDrawerProps = {
   isOpen: boolean;
@@ -30,7 +32,7 @@ export const RecordDrawer = ({
   const [storeName, setStoreName] = useState(""); // 매장
   const [themeName, setThemeName] = useState(""); // 테마명
   const [genre, setGenre] = useState("감성/드라마");
-  const [roadBadge, setRoadBadge] = useState("꽃길");
+  const [roadBadge, setRoadBadge] = useState<EscapeRecord["roadBadge"]>("꽃길");
   const [isSuccess, setIsSuccess] = useState(true);
   const [clearTime, setClearTime] = useState("");
   const [avgRating, setAvgRating] = useState(4.0);
@@ -39,17 +41,63 @@ export const RecordDrawer = ({
   const [reviewComment, setReviewComment] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState(["테마추천"]);
-  const [visitDate, setVisitDate] = useState();
+  const [visitDate, setVisitDate] = useState(
+    () => new Date().toISOString().split("T")[0],
+  );
+  const user = useAuthStore((state) => state.user);
 
-  const handleSubmit = () => {
-    // onSubmit(newRecord);
+  const handleAddTag = () => {
+    const trimmed = tagInput.trim().replace(/^#/, "");
+    if (trimmed && !tags.includes(trimmed)) {
+      setTags([...tags, trimmed]);
+      setTagInput("");
+    }
+  };
+
+  const handleRemoveTag = (tag: string) => {
+    setTags(tags.filter((t) => t !== tag));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!storeName.trim() || !themeName.trim()) return;
+
+    const newReview = {
+      id: `rev-${Date.now}`,
+      author: user?.name || "",
+      content: reviewContent || "즐겁게 플레이했습니다!",
+      comment: reviewComment || "",
+      rating: avgRating,
+      createdAt: new Date().toISOString().split("T")[0],
+    };
+
+    const newRecord: EscapeRecord = {
+      id: `rec-${Date.now()}`,
+      storeName: storeName.trim(),
+      themeName: themeName.trim(),
+      genre,
+      roadBadge,
+      avgRating,
+      lockRatio,
+      isSuccess,
+      clearTime: clearTime.trim() || (isSuccess ? "성공" : "타임아웃"),
+      reviews: [newReview],
+      tags,
+      createdAt: new Date().toISOString(),
+      date: new Date(visitDate),
+    };
+
+    console.log(newRecord);
+
+    onSubmit(newRecord);
     onClose();
   };
 
   return (
     <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DrawerContent className="w-full max-w-107.5 h-dvh mx-auto flex  shrink-0 bg-white">
-        <DrawerHeader className="border-b border-neutral-100 px-5 py-3.5 flex items-center justify-between shrink-0">
+        <DrawerHeader className="border-b border-neutral-100 px-5 py-3.5 flex flex-row items-center justify-between shrink-0">
           <DrawerTitle className="font-black text-neutral-900 flex items-center gap-1.5">
             방탈출 기록하기
           </DrawerTitle>
@@ -63,71 +111,74 @@ export const RecordDrawer = ({
           className="flex-1 overflow-y-auto px-5 py-4 "
         >
           <div className="space-y-3">
-            <div>
-              <label htmlFor="">매장명</label>
+            <Field>
+              <FieldLabel htmlFor="store-name">매장명</FieldLabel>
               <Input
+                id="store-name"
                 type="text"
                 placeholder="예: 비트포비아 던전 강남"
                 value={storeName}
                 onChange={(e) => setStoreName(e.target.value)}
                 required
               />
-            </div>
+            </Field>
 
-            <div>
-              <label htmlFor="">테마</label>
+            <Field>
+              <FieldLabel htmlFor="theme-name">테마</FieldLabel>
               <Input
+                id="theme-name"
                 type="text"
                 placeholder="비밀의 화원"
                 value={themeName}
                 onChange={(e) => setThemeName(e.target.value)}
                 required
               />
-            </div>
-            <div>
-              <label htmlFor="">탈출</label>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="">탈출</FieldLabel>
               <div>
                 <Button onClick={() => setIsSuccess(true)}>성공 🎉</Button>
                 <Button onClick={() => setIsSuccess(false)}>실패</Button>
               </div>
-            </div>
-            <div>
-              <label htmlFor="">
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="">
                 <Clock className="w-3.5 h-3.5" />{" "}
                 {isSuccess ? "남은 시간" : "진행률"}
-              </label>
+              </FieldLabel>
               <Input
                 placeholder={isSuccess ? "10분 남음" : "실패"}
                 value={clearTime}
                 onChange={(e) => setClearTime(e.target.value)}
               />
-            </div>
-            <div>
+            </Field>
+            <Field>
               {/* 평가 */}
-              <label htmlFor="">평가</label>
+              <FieldLabel htmlFor="road-badge">평가</FieldLabel>
               <div>
                 {ROAD_BADGE_OPTIONS.map((badge) => (
-                  <button
+                  <Button
+                    id="road-badge"
                     key={badge}
                     type="button"
                     onClick={() => setRoadBadge(badge)}
                     className={`transition-all ${
                       roadBadge === badge
-                        ? "scale-105 ring-2 ring-neutral-900 rounded-md"
-                        : "opacity-60"
+                        ? "scale-105  ring-neutral-900 rounded-md"
+                        : "opacity-40"
                     }`}
                   >
                     <RoadBadge badge={badge} />
-                  </button>
+                  </Button>
                 ))}
               </div>
-            </div>
-            <div>
-              <div>
-                <label className="text-xs font-bold text-neutral-700 flex items-center gap-1">
-                  <Key className="w-3.5 h-3.5 text-neutral-500" /> 자물쇠 대
-                  장치 비율
-                </label>
+            </Field>
+            <Field className="">
+              <div className="flex items-center justify-between">
+                <FieldLabel className="text-xs font-bold text-neutral-700 flex items-center gap-1">
+                  <Key className="w-3.5 h-3.5 text-neutral-500" /> 자물쇠와 장치
+                  비율
+                </FieldLabel>
                 <span className="text-xs font-black text-neutral-900 bg-white px-2 py-0.5 rounded-md border border-neutral-200">
                   자물쇠 {lockRatio} : 장치 {10 - lockRatio}
                 </span>
@@ -138,21 +189,22 @@ export const RecordDrawer = ({
                 max={10}
                 step={1}
                 onValueChange={(lockRatio) => setLockRatio(lockRatio)}
-                className="py-1.5"
+                className="py-1.5 mx-auto w-full bg-accent"
               />
               <div className="flex justify-between">
                 <span>자물쇠 100%</span>
-                <span>반반 (5:5)</span>
+                <span>반반 (50:50)</span>
                 <span>장치 100%</span>
               </div>
-            </div>
+            </Field>
 
             <div>
-              <div>
-                <label htmlFor="">총 평점</label>
+              <Field>
+                <FieldLabel htmlFor="avg-rating">총 평점</FieldLabel>
                 <div>
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Button
+                      id="avg-rating"
                       key={star}
                       onClick={() => setAvgRating(star)}
                       className="p-1 hover:scale-110 transition-transform"
@@ -167,33 +219,39 @@ export const RecordDrawer = ({
                     </Button>
                   ))}
                 </div>
-              </div>
+              </Field>
             </div>
 
-            <div>
-              <label htmlFor="">방탈출 한 날(방문일)</label>
+            <Field>
+              <FieldLabel htmlFor="visit-date">방탈출 한 날(방문일)</FieldLabel>
               <Input
+                id="visit-date"
                 type="date"
                 value={visitDate}
                 onChange={(e) => setVisitDate(e.target.value)}
               />
-            </div>
-            <div>
-              <label htmlFor="">장르</label>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="genre">장르</FieldLabel>
               <div>
                 {GENRE_OPTIONS.map((genre) => (
-                  <Button key={genre} onClick={() => setGenre(genre)}>
+                  <Button
+                    id="genre"
+                    key={genre}
+                    onClick={() => setGenre(genre)}
+                    className="border-none"
+                  >
                     {genre}
                   </Button>
                 ))}
               </div>
-            </div>
+            </Field>
 
             <div>
               <Field>
-                <FieldLabel htmlFor="textarea-message">상세 후기</FieldLabel>
+                <FieldLabel htmlFor="review-content">상세 후기</FieldLabel>
                 <Textarea
-                  id="textarea-message"
+                  id="review-content"
                   placeholder="솔직한 후기 작성하기"
                   value={reviewContent}
                   onChange={(e) => setReviewContent(e.target.value)}
@@ -203,14 +261,68 @@ export const RecordDrawer = ({
 
             <div>
               <Field>
+                <FieldLabel htmlFor="review-comment">한줄 요약</FieldLabel>
+                <Input
+                  id="review-comment"
+                  placeholder="이 테마가 내 인생테마다"
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value)}
+                />
+              </Field>
+            </div>
+
+            <div className="py-3.5">
+              <Field>
                 <FieldLabel htmlFor="tags">태그</FieldLabel>
-                <div>{/* 태그 고민해보기 */}</div>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="예: 공포, 볼륨큼 (엔터 입력)"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddTag();
+                      }
+                    }}
+                    className="h-9 text-xs rounded-xl"
+                  />
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleAddTag}
+                    className="h-9 px-3 text-xs font-bold rounded-xl shrink-0"
+                  >
+                    <Plus className="w-3.5 h-3.5 mr-0.5" /> 추가
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {tags.map((t) => (
+                    <Badge
+                      key={t}
+                      variant="secondary"
+                      className="gap-1 px-2.5 py-1 text-xs rounded-lg bg-neutral-100 hover:bg-neutral-200 text-neutral-700 font-medium transition-colors border-0"
+                    >
+                      #{t}
+                      <Button
+                        onClick={() => handleRemoveTag(t)}
+                        className="text-neutral-400 hover:text-neutral-800 transition-colors ml-0.5 rounded-full"
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </Badge>
+                  ))}
+                </div>
               </Field>
             </div>
           </div>
 
           <div>
-            <Button type="button" onClick={() => handleSubmit()}>
+            <Button
+              onClick={handleSubmit}
+              className="w-full py-3.5 bg-neutral-900 hover:bg-neutral-800 text-white"
+            >
+              <Check />
               등록하기
             </Button>
           </div>

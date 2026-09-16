@@ -92,7 +92,11 @@ export function MainPage() {
   const successRate =
     totalCount > 0 ? Math.round((successCount / totalCount) * 100) : 0;
 
-  const handleAddRecord = () => {};
+  const handleAddRecord = (newRecord: EscapeRecord) => {
+    setRecords((prev) => [newRecord, ...prev]);
+
+    // console.log(newRecord);
+  };
 
   return (
     <div className="flex-1 flex flex-col bg-neutral-50 min-h-full pb-24">
