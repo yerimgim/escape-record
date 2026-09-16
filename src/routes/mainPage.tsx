@@ -94,8 +94,6 @@ export function MainPage() {
 
   const handleAddRecord = (newRecord: EscapeRecord) => {
     setRecords((prev) => [newRecord, ...prev]);
-
-    // console.log(newRecord);
   };
 
   return (

@@ -58,6 +58,22 @@ export const RecordDrawer = ({
     setTags(tags.filter((t) => t !== tag));
   };
 
+  const resetForm = () => {
+    setStoreName("");
+    setThemeName("");
+    setGenre("감성/드라마");
+    setRoadBadge("꽃길");
+    setIsSuccess(true);
+    setClearTime("");
+    setAvgRating(4.0);
+    setLockRatio(5);
+    setReviewContent("");
+    setReviewComment("");
+    setTagInput("");
+    setTags([""]);
+    setVisitDate(() => new Date().toISOString().split("T")[0]);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -88,9 +104,8 @@ export const RecordDrawer = ({
       date: new Date(visitDate),
     };
 
-    console.log(newRecord);
-
     onSubmit(newRecord);
+    resetForm();
     onClose();
   };
 
