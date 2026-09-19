@@ -15,6 +15,8 @@ import { useAuthStore } from "../store/useAuthStore";
 import type { EscapeRecord } from "../types/record";
 import { RoadBadge } from "../components/RoadBadge";
 import { RecordDrawer } from "../components/RecordDrawer";
+import { useRecordStore } from "../store/useRecordStore";
+import { Button } from "../components/ui/button";
 
 const MOCK_RECORDS: EscapeRecord[] = [
   {
@@ -81,10 +83,14 @@ const MOCK_RECORDS: EscapeRecord[] = [
 
 export function MainPage() {
   const user = useAuthStore((state) => state.user);
+  const records = useRecordStore((state) => state.records);
   const logout = useAuthStore((state) => state.logout);
   const userName = user?.name || "방탈출러";
 
-  const [records, setRecords] = useState(MOCK_RECORDS);
+  // const [records, setRecords] = useState(MOCK_RECORDS);
+  const [selectedRecord, setSelectedRecord] = useState<EscapeRecord | null>(
+    null,
+  );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const totalCount = records.length;
@@ -92,8 +98,9 @@ export function MainPage() {
   const successRate =
     totalCount > 0 ? Math.round((successCount / totalCount) * 100) : 0;
 
-  const handleAddRecord = (newRecord: EscapeRecord) => {
-    setRecords((prev) => [newRecord, ...prev]);
+  const handleAddRecord = () => {
+    setSelectedRecord(null);
+    setIsDrawerOpen(true);
   };
 
   return (
@@ -158,103 +165,125 @@ export function MainPage() {
           </div>
         </section>
 
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-neutral-900">
-              최근 기록 목록
-            </h3>
-            <span className="text-xs text-neutral-400 font-medium">
-              총 {records.length}개
-            </span>
+        {records.length === 0 ? (
+          <div className="p-5 space-y-4 mx-auto min-h-screen bg-neutral-50">
+            <div className="flex items-center justify-between pt-2 pb-1">
+              <div>
+                <h1 className="text-xl font-bold text-neutral-900">
+                  방탈출 기록장
+                </h1>
+                <p className="text-xs text-neutral-500">
+                  총 {records.length}개의 탈출 기록
+                </p>
+              </div>
+              <Button
+                onClick={handleAddRecord}
+                className="flex items-center gap-1.5 px-3.5 py-2 bg-neutral-900 hover:bg-neutral-800 text-white font-medium text-xs rounded-xl shadow-xs transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                기록하기
+              </Button>
+            </div>
           </div>
+        ) : (
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-neutral-900">
+                최근 기록 목록
+              </h3>
+              <span className="text-xs text-neutral-400 font-medium">
+                총 {records.length}개
+              </span>
+            </div>
 
-          <div className="space-y-3.5">
-            {records.map((item) => {
-              const primaryReview = item.reviews[0];
-              const lockVal = item.lockRatio;
-              const deviceVal = 10 - item.lockRatio;
+            <div className="space-y-3.5">
+              {records.map((item) => {
+                const primaryReview = item.reviews[0];
+                const lockVal = item.lockRatio;
+                const deviceVal = 10 - item.lockRatio;
 
-              return (
-                <div
-                  key={item.id}
-                  className="bg-white rounded-2xl border border-neutral-100 p-4 shadow-xs hover:shadow-md transition-all active:scale-[0.99] cursor-pointer space-y-3"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-xs font-semibold text-neutral-400">
-                          {item.storeName}
-                        </span>
+                return (
+                  <div
+                    key={item.id}
+                    className="bg-white rounded-2xl border border-neutral-100 p-4 shadow-xs hover:shadow-md transition-all active:scale-[0.99] cursor-pointer space-y-3"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-xs font-semibold text-neutral-400">
+                            {item.storeName}
+                          </span>
 
-                        <RoadBadge badge={item.roadBadge} />
+                          <RoadBadge badge={item.roadBadge} />
+                        </div>
+                        <h4 className="text-base font-black text-neutral-900 tracking-tight leading-snug">
+                          {item.themeName}
+                        </h4>
                       </div>
-                      <h4 className="text-base font-black text-neutral-900 tracking-tight leading-snug">
-                        {item.themeName}
-                      </h4>
-                    </div>
 
-                    {item.isSuccess ? (
-                      <span className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center gap-1">
-                        <Clock className="w-3 h-3" /> {item.clearTime}
-                      </span>
-                    ) : (
-                      <span className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full bg-rose-50 text-rose-600 border border-rose-100">
-                        실패 ({item.clearTime})
-                      </span>
-                    )}
-                  </div>
-
-                  {/* 테마 메타 정보 (평점, 장르, 자물쇠 비율) */}
-                  <div className="flex items-center gap-2.5 text-xs text-neutral-600 bg-neutral-50 px-3 py-2 rounded-xl">
-                    <div className="flex items-center gap-1 font-bold text-amber-500">
-                      <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                      <span>{item.avgRating.toFixed(1)}</span>
-                    </div>
-                    <span className="text-neutral-200">|</span>
-                    <span className="font-medium text-neutral-700">
-                      {item.genre}
-                    </span>
-                    <span className="text-neutral-200">|</span>
-                    <div className="flex items-center gap-1 text-neutral-500">
-                      <Key className="w-3.5 h-3.5 text-neutral-400" />
-                      <span>
-                        자물쇠 {lockVal} : 장치 {deviceVal}
-                      </span>
-                    </div>
-                  </div>
-
-                  {primaryReview && (
-                    <div className="space-y-0.5">
-                      <p className="text-xs text-neutral-700 font-medium line-clamp-2 leading-relaxed">
-                        "{primaryReview.content}"
-                      </p>
-                      {primaryReview.comment && (
-                        <p className="text-[11px] text-neutral-400 italic">
-                          - {primaryReview.comment}
-                        </p>
+                      {item.isSuccess ? (
+                        <span className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> {item.clearTime}
+                        </span>
+                      ) : (
+                        <span className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full bg-rose-50 text-rose-600 border border-rose-100">
+                          실패 ({item.clearTime})
+                        </span>
                       )}
                     </div>
-                  )}
 
-                  <div className="flex items-center justify-between pt-1">
-                    <div className="flex gap-1.5 flex-wrap items-center">
-                      <Tag className="w-3 h-3 text-neutral-300" />
-                      {item.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="text-[10px] font-medium text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded-md"
-                        >
-                          #{tag}
+                    {/* 테마 메타 정보 (평점, 장르, 자물쇠 비율) */}
+                    <div className="flex items-center gap-2.5 text-xs text-neutral-600 bg-neutral-50 px-3 py-2 rounded-xl">
+                      <div className="flex items-center gap-1 font-bold text-amber-500">
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        <span>{item.avgRating.toFixed(1)}</span>
+                      </div>
+                      <span className="text-neutral-200">|</span>
+                      <span className="font-medium text-neutral-700">
+                        {item.genre}
+                      </span>
+                      <span className="text-neutral-200">|</span>
+                      <div className="flex items-center gap-1 text-neutral-500">
+                        <Key className="w-3.5 h-3.5 text-neutral-400" />
+                        <span>
+                          자물쇠 {lockVal} : 장치 {deviceVal}
                         </span>
-                      ))}
+                      </div>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-neutral-300" />
+
+                    {primaryReview && (
+                      <div className="space-y-0.5">
+                        <p className="text-xs text-neutral-700 font-medium line-clamp-2 leading-relaxed">
+                          "{primaryReview.content}"
+                        </p>
+                        {primaryReview.comment && (
+                          <p className="text-[11px] text-neutral-400 italic">
+                            - {primaryReview.comment}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between pt-1">
+                      <div className="flex gap-1.5 flex-wrap items-center">
+                        <Tag className="w-3 h-3 text-neutral-300" />
+                        {item.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-[10px] font-medium text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded-md"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-neutral-300" />
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                );
+              })}
+            </div>
+          </section>
+        )}
       </main>
 
       <div className="fixed bottom-6 left-0 right-0 max-w-107.5 mx-auto px-5 flex justify-end pointer-events-none">
@@ -270,7 +299,7 @@ export function MainPage() {
       <RecordDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onSubmit={handleAddRecord}
+        // onSubmit={handleAddRecord}
       />
     </div>
   );

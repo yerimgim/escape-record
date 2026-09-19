@@ -17,18 +17,14 @@ import { Textarea } from "./ui/textarea";
 import { Field, FieldLabel } from "./ui/field";
 import { useAuthStore } from "../store/useAuthStore";
 import { Badge } from "./ui/badge";
+import { useRecordStore } from "../store/useRecordStore";
 
 type RecordDrawerProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (record: EscapeRecord) => void;
 };
 
-export const RecordDrawer = ({
-  isOpen,
-  onClose,
-  onSubmit,
-}: RecordDrawerProps) => {
+export const RecordDrawer = ({ isOpen, onClose }: RecordDrawerProps) => {
   const [storeName, setStoreName] = useState(""); // 매장
   const [themeName, setThemeName] = useState(""); // 테마명
   const [genre, setGenre] = useState("감성/드라마");
@@ -45,6 +41,7 @@ export const RecordDrawer = ({
     () => new Date().toISOString().split("T")[0],
   );
   const user = useAuthStore((state) => state.user);
+  const addRecord = useRecordStore((state) => state.addRecord);
 
   const handleAddTag = () => {
     const trimmed = tagInput.trim().replace(/^#/, "");
@@ -104,7 +101,8 @@ export const RecordDrawer = ({
       date: new Date(visitDate),
     };
 
-    onSubmit(newRecord);
+    addRecord(newRecord);
+    // onSubmit(newRecord);
     resetForm();
     onClose();
   };

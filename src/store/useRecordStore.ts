@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware";
 
 type RecordStore = {
   records: EscapeRecord[];
-  // addRecord: (record: EscapeRecord) => void;
+  addRecord: (record: EscapeRecord) => void;
   // deleteRecord: (id: string) => void;
   // updateRecord: (id, record) => void
 };
@@ -46,8 +46,17 @@ const INITIAL_RECORDS: EscapeRecord[] = [
 export const useRecordStore = create<RecordStore>()(
   persist(
     (set) => ({
-      records: INITIAL_RECORDS,
-      // addRecord:(newRecord) => {...}
+      records: [],
+      addRecord: (newRecord: EscapeRecord) => {
+        const createdItem = {
+          ...newRecord,
+          id: crypto.randomUUID(),
+          createdAt: new Date().toISOString(),
+        };
+        set((state) => ({
+          records: [createdItem, ...state.records],
+        }));
+      },
     }),
     {
       name: "escape-records-storage",
