@@ -5,7 +5,7 @@ import { persist } from "zustand/middleware";
 type RecordStore = {
   records: EscapeRecord[];
   addRecord: (record: EscapeRecord) => void;
-  // deleteRecord: (id: string) => void;
+  deleteRecord: (id: string) => void;
   // updateRecord: (id, record) => void
 };
 
@@ -55,6 +55,11 @@ export const useRecordStore = create<RecordStore>()(
         };
         set((state) => ({
           records: [createdItem, ...state.records],
+        }));
+      },
+      deleteRecord: (id: string) => {
+        set((state) => ({
+          records: state.records.filter((record) => record.id !== id),
         }));
       },
     }),

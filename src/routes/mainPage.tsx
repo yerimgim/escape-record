@@ -84,10 +84,10 @@ const MOCK_RECORDS: EscapeRecord[] = [
 export function MainPage() {
   const user = useAuthStore((state) => state.user);
   const records = useRecordStore((state) => state.records);
+  const deleteRecord = useRecordStore((state) => state.deleteRecord);
   const logout = useAuthStore((state) => state.logout);
   const userName = user?.name || "방탈출러";
 
-  // const [records, setRecords] = useState(MOCK_RECORDS);
   const [selectedRecord, setSelectedRecord] = useState<EscapeRecord | null>(
     null,
   );
@@ -126,11 +126,11 @@ export function MainPage() {
       <main className="flex-1 px-5 pt-6 space-y-6">
         <section className="space-y-3">
           <div className="space-y-1">
-            <h2 className="text-xl font-black text-neutral-900 tracking-tight leading-tight">
-              {userName}님,
+            <h2 className="font-aggro text-xl font-black text-neutral-900 tracking-tight leading-tight">
+              {userName}
             </h2>
             <p className="text-xs text-neutral-500 font-medium">
-              지금까지 탈출해온 기록들이에요.
+              우리가 지금까지 탈출해온 기록들
             </p>
           </div>
 
@@ -213,23 +213,46 @@ export function MainPage() {
                           <span className="text-xs font-semibold text-neutral-400">
                             {item.storeName}
                           </span>
-
                           <RoadBadge badge={item.roadBadge} />
+                          <div>
+                            {item.isSuccess ? (
+                              <span className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center gap-1">
+                                <Clock className="w-3 h-3" /> {item.clearTime}
+                              </span>
+                            ) : (
+                              <span className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full bg-rose-50 text-rose-600 border border-rose-100">
+                                실패 ({item.clearTime})
+                              </span>
+                            )}
+                          </div>
                         </div>
+
                         <h4 className="text-base font-black text-neutral-900 tracking-tight leading-snug">
                           {item.themeName}
                         </h4>
                       </div>
-
-                      {item.isSuccess ? (
-                        <span className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> {item.clearTime}
-                        </span>
-                      ) : (
-                        <span className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full bg-rose-50 text-rose-600 border border-rose-100">
-                          실패 ({item.clearTime})
-                        </span>
-                      )}
+                      {/* <div>
+                        {item.isSuccess ? (
+                          <span className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center gap-1">
+                            <Clock className="w-3 h-3" /> {item.clearTime}
+                          </span>
+                        ) : (
+                          <span className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full bg-rose-50 text-rose-600 border border-rose-100">
+                            실패 ({item.clearTime})
+                          </span>
+                        )}
+                      </div> */}
+                      <div className="flex items-center gap-2">
+                        {/* <Button className="text-xs text-neutral-500 hover:text-neutral-900 underline">
+                          수정
+                        </Button> */}
+                        <Button
+                          onClick={() => deleteRecord(item.id)}
+                          className="text-xs text-red-500 hover:text-red-700 underline"
+                        >
+                          삭제
+                        </Button>
+                      </div>
                     </div>
 
                     {/* 테마 메타 정보 (평점, 장르, 자물쇠 비율) */}
@@ -299,7 +322,6 @@ export function MainPage() {
       <RecordDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        // onSubmit={handleAddRecord}
       />
     </div>
   );
