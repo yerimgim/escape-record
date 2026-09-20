@@ -7,7 +7,7 @@ import {
   DrawerTitle,
 } from "./ui/drawer";
 import { Input } from "./ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { EscapeRecord } from "../types/record";
 import { Button } from "./ui/button";
 import { RoadBadge } from "./RoadBadge";
@@ -22,9 +22,14 @@ import { useRecordStore } from "../store/useRecordStore";
 type RecordDrawerProps = {
   isOpen: boolean;
   onClose: () => void;
+  editTarget?: EscapeRecord | null;
 };
 
-export const RecordDrawer = ({ isOpen, onClose }: RecordDrawerProps) => {
+export const RecordDrawer = ({
+  isOpen,
+  onClose,
+  editTarget,
+}: RecordDrawerProps) => {
   const [storeName, setStoreName] = useState(""); // 매장
   const [themeName, setThemeName] = useState(""); // 테마명
   const [genre, setGenre] = useState("감성/드라마");
@@ -42,6 +47,12 @@ export const RecordDrawer = ({ isOpen, onClose }: RecordDrawerProps) => {
   );
   const user = useAuthStore((state) => state.user);
   const addRecord = useRecordStore((state) => state.addRecord);
+
+  useEffect(() => {
+    if (editTarget) {
+      console.log("edittarget");
+    }
+  }, [editTarget, open]);
 
   const handleAddTag = () => {
     const trimmed = tagInput.trim().replace(/^#/, "");
@@ -101,8 +112,12 @@ export const RecordDrawer = ({ isOpen, onClose }: RecordDrawerProps) => {
       date: new Date(visitDate),
     };
 
-    addRecord(newRecord);
-    // onSubmit(newRecord);
+    if (editTarget) {
+      console.log("edit target");
+    } else {
+      addRecord(newRecord);
+    }
+
     resetForm();
     onClose();
   };

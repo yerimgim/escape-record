@@ -85,6 +85,7 @@ export function MainPage() {
   const user = useAuthStore((state) => state.user);
   const records = useRecordStore((state) => state.records);
   const deleteRecord = useRecordStore((state) => state.deleteRecord);
+  const updateRecord = useRecordStore((state) => state.updateRecord);
   const logout = useAuthStore((state) => state.logout);
   const userName = user?.name || "방탈출러";
 
@@ -97,6 +98,11 @@ export function MainPage() {
   const successCount = records.filter((r) => r.isSuccess).length;
   const successRate =
     totalCount > 0 ? Math.round((successCount / totalCount) * 100) : 0;
+
+  const handleEditRecord = (record: EscapeRecord) => {
+    setSelectedRecord(record);
+    setIsDrawerOpen(true);
+  };
 
   const handleAddRecord = () => {
     setSelectedRecord(null);
@@ -231,23 +237,18 @@ export function MainPage() {
                           {item.themeName}
                         </h4>
                       </div>
-                      {/* <div>
-                        {item.isSuccess ? (
-                          <span className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center gap-1">
-                            <Clock className="w-3 h-3" /> {item.clearTime}
-                          </span>
-                        ) : (
-                          <span className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full bg-rose-50 text-rose-600 border border-rose-100">
-                            실패 ({item.clearTime})
-                          </span>
-                        )}
-                      </div> */}
                       <div className="flex items-center gap-2">
-                        {/* <Button className="text-xs text-neutral-500 hover:text-neutral-900 underline">
-                          수정
-                        </Button> */}
                         <Button
-                          onClick={() => deleteRecord(item.id)}
+                          onClick={() => handleEditRecord(item)}
+                          className="text-xs text-neutral-500 hover:text-neutral-900 underline"
+                        >
+                          수정
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            if (confirm("정말 삭제할건가요?"))
+                              deleteRecord(item.id);
+                          }}
                           className="text-xs text-red-500 hover:text-red-700 underline"
                         >
                           삭제
@@ -310,18 +311,19 @@ export function MainPage() {
       </main>
 
       <div className="fixed bottom-6 left-0 right-0 max-w-107.5 mx-auto px-5 flex justify-end pointer-events-none">
-        <button
+        <Button
           onClick={() => setIsDrawerOpen(true)}
           className="pointer-events-auto bg-neutral-900 hover:bg-neutral-800 text-white shadow-lg shadow-neutral-900/20 active:scale-95 transition-all flex items-center gap-2 px-5 py-3.5 rounded-full font-bold text-sm"
         >
           <Plus className="w-5 h-5" />
           <span>기록하기</span>
-        </button>
+        </Button>
       </div>
 
       <RecordDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
+        editTarget={selectedRecord}
       />
     </div>
   );
